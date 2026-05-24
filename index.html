@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ms" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Mendengar IGCSE (40 Marks)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{background:#f8fafc;font-family:sans-serif; transition: filter 0.3s ease;}
+        .no-select { -webkit-user-select: none; user-select: none; }
+        @media print { html, body { display: none !important; } }
+        .blurred-security { filter: blur(25px) grayscale(100%) !important; pointer-events: none !important; opacity: 0.2 !important; }
+        .opt-btn{width:100%;text-align:left;padding:1rem;border:2px solid #e2e8f0;border-radius:1rem;margin-bottom:0.75rem;transition:all 0.2s;font-weight:600;display:flex;align-items:center;background:white;cursor:pointer;}
+        .opt-btn:hover{border-color:#cbd5e1;background:#f1f5f9;}
+        .opt-btn:disabled{cursor:not-allowed;}
+        .correct-answer{background-color:#10b981!important;color:white;border-color:#059669!important;}
+        .wrong-answer{background-color:#ef4444!important;color:white;border-color:#b91c1c!important;}
+        .dimmed-answer{opacity:0.4; filter:grayscale(100%);}
+        .selected{border-color:#3b82f6;background-color:#eff6ff;}
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .line-through-red { text-decoration: line-through; color: #9f1239; }
+        #welcome-modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="py-10 px-4 min-h-screen pt-24 pb-10 flex flex-col items-center no-select" id="app-body">
+    <div id="welcome-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl transform scale-100 transition-transform">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-black text-indigo-900 uppercase italic">Pendaftaran Pelajar</h2>
+                <p class="text-sm text-slate-500 font-medium mt-2">Sila lengkapkan butiran di bawah sebelum memulakan ujian.</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Nama Penuh</label>
+                    <input type="text" id="student-name" placeholder="Contoh: Ahmad Albab" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Pilih Guru Anda</label>
+                    <select id="student-teacher" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                        <option value="" disabled selected>Pilih Guru...</option>
+                        <option value="Satina">Cikgu Satina</option>
+                        <option value="Shahrizan">Cikgu Shahrizan</option>
+                        <option value="Aziana">Cikgu Aziana</option>
+                        <option value="Farra">Cikgu Farra</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Tahun (Year)</label>
+                        <select id="student-year" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                            <option value="" disabled selected>Pilih...</option>
+                            <option value="7">Year 7</option>
+                            <option value="8">Year 8</option>
+                            <option value="9">Year 9</option>
+                            <option value="10">Year 10</option>
+                            <option value="11">Year 11</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Tahap Kelas</label>
+                        <select id="student-level" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                            <option value="" disabled selected>Pilih...</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Foundation">Foundation</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="startQuiz()" class="w-full py-4 mt-2 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-indigo-700 hover:scale-[1.02] transition-all">Mula Ujian Sekarang</button>
+            </div>
+        </div>
+    </div>
+    <div class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-md border-b shadow-sm z-50 py-3 px-4 sm:px-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-xs sm:text-sm font-black text-indigo-900 uppercase italic leading-none">Latihan Mendengar IGCSE (40 Marks)</h1>
+            <p class="text-[8px] font-bold text-slate-400 mt-1 uppercase"><span id="display-student-name">Pelajar</span> | </p>
+        </div>
+        <div class="text-lg sm:text-xl font-black text-indigo-600 leading-none bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100 flex items-center gap-2">
+            <button onclick="refreshPage()" class="text-[9px] bg-white text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 border border-slate-200 px-2 py-1 rounded-lg uppercase tracking-wider font-bold transition-colors shadow-sm cursor-pointer">Refresh ↻</button>
+            <button onclick="logoutUser()" class="btn-logout text-[9px] bg-rose-100 text-rose-600 hover:bg-rose-500 hover:text-white px-2 py-1 rounded-lg uppercase tracking-wider font-bold transition-colors shadow-sm cursor-pointer">Log Keluar</button>
+            <span id="offline-indicator" class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" title="Auto-Save Aktif"></span>
+            <span>Skor: <span id="score-display">-</span> / <span id="total-display">0</span></span>
+        </div>
+    </div>
+    <div id="main-content" class="max-w-3xl mx-auto w-full mt-4 hidden">
+        <div id="tabs" class="flex overflow-x-auto gap-2 mb-4 pb-2 hide-scrollbar px-1"></div>
+        <div id="box" class="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-8"></div>
+    </div>
+    <div id="submitting-overlay" class="fixed inset-0 z-[200] bg-white/80 backdrop-blur-sm flex-col items-center justify-center hidden">
+        <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+        <h3 class="text-lg font-black text-indigo-900 uppercase">Menghantar Jawapan...</h3>
+        <p class="text-xs font-bold text-slate-500 mt-1">Sila tunggu sebentar.</p>
+    </div>
+    <script>
+
+const sections = [{"id":1,"title":"Bhg 1 (S1-8)","type":"objective","situation":"Sekumpulan sahabat menyertai ekspedisi berkayak menyusuri sungai di hutan paya bakau yang belum diterokai sebagai aktiviti rekreasi.","dialogue":"","questions":[{"id":1,"text":"Mengapakah Hafiz dan Siti memilih aktiviti berkayak tersebut?","options":{"A":"Untuk merehatkan minda dan menikmati alam semula jadi.","B":"Untuk mencari cabaran fizikal yang ekstrem.","C":"Untuk bertemu dengan penduduk tempatan di kawasan terpencil.","D":"Untuk menguji peralatan kayak baharu mereka."},"correct":"A","evidence":"F1 (Siti): \"Tujuan utama kita memilih aktiviti ini memang untuk merehatkan minda daripada kesibukan kota, sambil merasai keindahan alam asli.\" M1 (Hafiz): \"Mencari ketenangan dan menjauhi rutin harian yang memenatkan adalah antara sebab utama kita memilih rekreasi sebegini.\""},{"id":2,"text":"Apakah keistimewaan utama hutan paya bakau yang mereka terokai?","options":{"A":"Ekosistemnya masih asli dan belum diterokai sepenuhnya.","B":"Ia merupakan laluan sungai utama untuk perdagangan.","C":"Terdapat pelbagai kemudahan moden untuk pengunjung.","D":"Kawasannya sering dikunjungi pelancong dari luar negara."},"correct":"A","evidence":"M1 (Hafiz): \"Ekosistemnya masih utuh dan belum terusik. Kita dapat melihat kepelbagaian flora dan fauna yang jarang ditemui, menunjukkan ia benar-benar belum diterokai sepenuhnya.\""},{"id":3,"text":"Apakah cabaran yang dihadapi oleh Hafiz dan Siti semasa ekspedisi berkayak?","options":{"A":"Kekurangan bekalan makanan dan minuman yang dibawa.","B":"Kesukaran mencari tempat penginapan yang selesa.","C":"Mengemudi di air cetek, arus kuat dan cuaca tidak menentu.","D":"Terpaksa berhadapan dengan serangan haiwan buas."},"correct":"C","evidence":"M1 (Hafiz): \"terpaksa berhati-hati melintasi kawasan air cetek yang dipenuhi akar bakau?\" F1 (Siti): \"Arus sungai yang agak kuat di beberapa bahagian memerlukan kita mendayung dengan lebih tenaga. Cuaca tidak menentu pada awalnya juga sedikit merisaukan.\""},{"id":4,"text":"Apakah antara pemandangan yang paling menarik perhatian mereka sepanjang ekspedisi itu?","options":{"A":"Pemandangan bot-bot nelayan yang sibuk.","B":"Bangunan pencakar langit yang tinggi.","C":"Burung enggang, monyet, kelip-kelip dan ikan kecil.","D":"Persembahan kebudayaan oleh masyarakat tempatan."},"correct":"C","evidence":"F1 (Siti): \"burung-burung enggang terbang melintasi kanopi pokok.\" M1 (Hafiz): \"kumpulan monyet berhidung panjang... Kelip-kelip pada waktu senja turut menambah keindahan suasana.\" F1 (Siti): \"ikan-ikan kecil yang melompat di permukaan air, serta pelbagai jenis tumbuhan air.\""},{"id":5,"text":"Apakah manfaat utama yang Hafiz dan Siti peroleh daripada aktiviti berkayak tersebut?","options":{"A":"Meningkatkan ketahanan fizikal dan ketenangan mental.","B":"Mengembangkan kemahiran memancing.","C":"Mendapatkan populariti di media sosial.","D":"Peluang untuk mencari harta karun tersembunyi."},"correct":"A","evidence":"M1 (Hafiz): \"banyak memberikan manfaat. Bukan sahaja fizikal kerana mendayung, tetapi juga mental.\" F1 (Siti): \"Daya ketahanan fizikal kita teruji, tetapi lebih penting, minda saya lebih tenang dan segar. Stres kerja seolah-olah hilang.\""},{"id":6,"text":"Apakah langkah keselamatan yang ditekankan oleh Hafiz dan Siti semasa ekspedisi berkayak?","options":{"A":"Berkayak pada waktu malam untuk mengelak cuaca panas.","B":"Memakai jaket keselamatan, membawa navigasi, dan memaklumkan pihak berkuasa.","C":"Membawa bahan letupan untuk pertahanan diri.","D":"Tidak memaklumkan sesiapa dan pergi bersendirian."},"correct":"B","evidence":"M1 (Hafiz): \"memastikan setiap peserta memakai jaket keselamatan sepanjang masa. Kami juga membawa peralatan navigasi... serta bekalan makanan dan air yang mencukupi.\" F1 (Siti): \"kita juga memaklumkan pihak berkuasa tempatan dan keluarga tentang laluan serta jangka masa ekspedisi.\""},{"id":7,"text":"Apakah perasaan keseluruhan Hafiz dan Siti selepas menyertai ekspedisi tersebut?","options":{"A":"Takut dan serik untuk menyertai ekspedisi lagi.","B":"Tidak berpuas hati dengan persekitaran yang kotor.","C":"Kagum, berbangga dan puas hati dengan pengalaman yang memperkaya jiwa.","D":"Kecewa kerana tidak menjumpai sebarang haiwan liar."},"correct":"C","evidence":"F1 (Siti): \"sangat kagum dan berbangga dapat menjejakkan kaki ke tempat belum diterokai... Ia pengalaman yang memperkaya jiwa dan memberi perspektif baharu tentang keindahan alam.\" M1 (Hafiz): \"Rasa terinspirasi dan lebih menghargai alam sekitar. Penat mendayung itu langsung tidak terasa berbanding kepuasan yang diperoleh.\""},{"id":8,"text":"Apakah rancangan Hafiz dan Siti untuk masa hadapan berkaitan aktiviti rekreasi?","options":{"A":"Mengadakan pertandingan kayak antarabangsa.","B":"Berhenti daripada melakukan aktiviti luar.","C":"Merancang ekspedisi serupa dan meneroka kawasan baharu.","D":"Menjadi pemandu pelancong profesional."},"correct":"C","evidence":"F1 (Siti): \"Kita patut merancang ekspedisi lain yang serupa pada masa hadapan.\" M1 (Hafiz): \"Mungkin kita boleh meneroka kawasan sungai lain yang kurang dikenali, atau mencuba aktiviti luar lain yang mencabar.\""}]},{"id":2,"title":"Bhg 2 (S9-14)","type":"objective","situation":"Peminat seni dan budaya menonton persembahan teater boneka tradisional yang digarap semula dengan sentuhan moden di dewan bandar raya.","dialogue":"","questions":[{"id":9,"text":"Apakah perasaan utama Suria selepas menonton persembahan tersebut?","options":{"A":"Keliru dengan gabungan tradisional dan moden","B":"Biasa-biasa sahaja dan kurang menarik","C":"Kecewa kerana tidak memenuhi jangkaan","D":"Terpukau dan melampaui jangkaan"},"correct":"D","evidence":"F1 (Suria): Hakim, saya pun berasa sama. Ia benar-benar melampaui jangkaan saya. Saya sebenarnya tidak pasti apa yang perlu saya jangkakan pada mulanya, tetapi gabungan elemen tradisional dengan sentuhan moden itu sangat memukau."},{"id":10,"text":"Apakah yang paling mengagumkan Hakim tentang penggarapan semula teater boneka itu?","options":{"A":"Pergerakan boneka yang janggal akibat teknologi","B":"Hanya bergantung sepenuhnya kepada elemen tradisional","C":"Penggunaan boneka baharu yang canggih","D":"Keaslian bentuk boneka yang dipelihara sambil disuntik unsur kontemporari"},"correct":"D","evidence":"M1 (Hakim): Betul, Suria. Saya kagum dengan cara mereka berjaya memelihara keaslian bentuk boneka itu, contohnya wayang kulit atau mak yong, sambil menyuntik unsur-unsur visual yang lebih kontemporari. Ia tidak terasa janggal langsung."},{"id":11,"text":"Apakah salah satu sentuhan moden yang paling menarik perhatian Suria dalam persembahan itu?","options":{"A":"Hanya menggunakan muzik tradisional","B":"Ketiadaan efek visual yang canggih","C":"Selitan melodi kontemporari dalam muzik","D":"Penggunaan hologram yang menampakkan boneka terbang"},"correct":"D","evidence":"F1 (Suria): ...Penggunaan teknologi bunyi dan efek visual yang canggih turut menyumbang kepada pengalaman yang lebih imersif. Bayangkan, ada adegan di mana boneka-boneka itu seperti terbang di udara dengan bantuan hologram. Itu sangat luar biasa!"},{"id":12,"text":"Bagaimanakah reaksi penonton terhadap persembahan tersebut?","options":{"A":"Rata-rata penonton tidak faham konsep persembahan","B":"Penonton kurang berminat dan cepat bosan","C":"Sangat positif, terhibur, dan terpesona oleh semua lapisan masyarakat","D":"Hanya kanak-kanak sahaja yang terhibur"},"correct":"C","evidence":"F1 (Suria): Reaksi penonton pula, nampak sangat positif. Ada keluarga yang membawa anak-anak kecil, dan mereka semua kelihatan terhibur dan terpesona. M1 (Hakim): Suara kanak-kanak ketawa dan tepukan gemuruh orang dewasa selepas setiap segmen memang membuktikan penerimaan yang baik."},{"id":13,"text":"Mengapakah Hakim berpendapat bahawa inisiatif mengadaptasi seni tradisional adalah penting?","options":{"A":"Untuk memastikan kelangsungan dan mengelakkan seni tradisional luput ditelan zaman","B":"Kerana ia memudahkan penggiat seni mendapatkan dana","C":"Agar seni tradisional dapat bersaing dengan seni kontemporari lain","D":"Supaya seni tradisional dapat diubah sepenuhnya menjadi moden"},"correct":"A","evidence":"M1 (Hakim): Saya rasa inisiatif seperti ini sangat penting untuk kelangsungan seni tradisional kita. Jika tidak diubah suai dan diberi nafas baharu, mungkin ia akan luput ditelan zaman."},{"id":14,"text":"Apakah harapan utama Suria terhadap masa depan teater boneka tradisional?","options":{"A":"Berharap lebih banyak penggiat seni mengadaptasinya untuk menjadi khazanah budaya yang dibanggakan","B":"Ingin melihat ia menjadi popular di peringkat global sahaja","C":"Agar ia hanya dipertontonkan kepada golongan elit","D":"Supaya ia kekal dalam bentuk asal tanpa sebarang perubahan"},"correct":"A","evidence":"F1 (Suria): Saya berharap agar lebih banyak penggiat seni mengambil langkah berani sebegini. Dengan sokongan yang padu, teater boneka tradisional boleh berkembang maju dan terus menjadi khazanah budaya yang dibanggakan."}]},{"id":3,"title":"Bhg 3 (S15-19)","type":"objective","situation":"Sebuah kafe buku menganjurkan malam permainan papan bertema mistik yang menarik minat golongan muda untuk berinteraksi secara santai.","dialogue":"","questions":[{"id":15,"text":"Apakah tujuan utama penganjuran malam permainan papan bertema mistik ini?","options":{"A":"Menarik minat warga emas terhadap permainan papan.","B":"Melatih kemahiran bermain permainan papan yang rumit.","C":"Meningkatkan jualan buku mistik di kafe.","D":"Menyediakan hiburan alternatif dan menggalakkan interaksi sosial."},"correct":"D","evidence":"F1 (Cik Sofia): ...menawarkan peluang interaksi bersemuka dan santai. Tema mistik juga membangkitkan rasa ingin tahu golongan muda. M1 (Encik Azmi): Jadi, ia menggalakkan interaksi sosial? F1 (Cik Sofia): Tepat. Suasana kondusif membina persahabatan baharu, jauh dari skrin gajet."},{"id":16,"text":"Bagaimanakah tema mistik membantu dalam meningkatkan suasana acara tersebut?","options":{"A":"Ia menciptakan pengalaman yang lebih imersif dan mendebarkan.","B":"Ia memendekkan tempoh masa setiap permainan.","C":"Ia memudahkan peserta untuk mencari pasangan bermain.","D":"Ia mengurangkan bunyi bising di kafe buku."},"correct":"A","evidence":"F1 (Cik Sofia): Ia memberi dimensi baharu. Pencahayaan suram, dekorasi unik, mencipta pengalaman imersif seperti masuk dunia fantasi. M1 (Encik Azmi): Ia menambah daya tarikan? F1 (Cik Sofia): Ya, menjadikan sesi permainan lebih mendebarkan dan penuh teka-teki, sesuai citarasa kami."},{"id":17,"text":"Mengapakah acara permainan papan semakin mendapat sambutan dalam kalangan golongan muda?","options":{"A":"Ia menawarkan alternatif hiburan yang aktif dan interaksi sosial bersemuka.","B":"Golongan muda kurang mahir menggunakan teknologi digital.","C":"Permainan papan lebih murah berbanding permainan digital.","D":"Kafe buku sentiasa mengadakan promosi permainan papan."},"correct":"A","evidence":"F1 (Cik Sofia): Kami mencari kelainan. Permainan papan menawarkan rehat menyegarkan, peluang bersosial langsung. Ia hiburan aktif, bukan pasif. M1 (Encik Azmi): Jadi, ia alternatif hiburan sihat? F1 (Cik Sofia): Ya, cara sihat menghabiskan masa lapang, lari dari dunia maya ke interaksi sebenar."},{"id":18,"text":"Apakah manfaat utama yang diperoleh peserta daripada aktiviti permainan papan ini?","options":{"A":"Mengurangkan perbelanjaan harian peserta.","B":"Menjana pendapatan sampingan melalui pertandingan.","C":"Meningkatkan kemahiran teknikal dan pengaturcaraan.","D":"Mengasah kemahiran berfikir kritis, komunikasi, dan pelepasan tekanan."},"correct":"D","evidence":"F1 (Cik Sofia): Banyak kemahiran insaniah diasah: berfikir kritis, keputusan strategik, komunikasi efektif, kerjasama, kawal emosi. Ia juga pelepasan tekanan. M1 (Encik Azmi): Platform pembelajaran tidak formal? F1 (Cik Sofia): Ya, membantu melupakan tekanan seketika dan fokus pada keseronokan permainan."},{"id":19,"text":"Apakah harapan Cik Sofia terhadap penganjuran acara permainan papan sebegini pada masa hadapan?","options":{"A":"Agar harga tiket masuk dapat ditingkatkan.","B":"Agar hanya permainan papan yang rumit ditawarkan.","C":"Agar acara ini hanya diadakan setahun sekali.","D":"Agar lebih banyak tempat menganjurkan acara serupa dengan tema yang pelbagai."},"correct":"D","evidence":"F1 (Cik Sofia): Saya harap ia diteruskan dan diperluaskan. Lebih banyak kafe atau pusat komuniti patut menganjurkannya dengan tema pelbagai. M1 (Encik Azmi): Untuk memperkukuh komuniti? F1 (Cik Sofia): Betul. Cara cemerlang mengisi masa lapang bermanfaat, menggalakkan interaksi bersemuka yang kian pudar."}]},{"id":4,"title":"Bhg 4 (S20-28)","type":"objective","situation":"Pengunjung taman hiburan maya baharu menggunakan gogal realiti berperantara untuk merasai pengalaman menunggang naga terbang melangkaui awan.","dialogue":"","questions":[{"id":20,"text":"Apakah reaksi awal Aina terhadap taman hiburan maya baharu itu?","options":{"A":"Ia menyeramkan dan menakutkan.","B":"Ia sangat memenatkan dan membosankan.","C":"Ia luar biasa dan sangat mengujakan.","D":"Ia agak mengecewakan dan tidak realistik."},"correct":"C","evidence":"F1 (Aina): Ya, Hafiz! Sungguh luar biasa dan mengujakan! Teknologi ni memang hebat."},{"id":21,"text":"Apakah elemen utama yang membuatkan pengalaman menunggang naga itu terasa nyata bagi Aina?","options":{"A":"Kelajuan naga yang tidak terkawal.","B":"Perasaan angin di muka dan pemandangan awan.","C":"Bau naga yang wujud dalam persekitaran.","D":"Suara naga yang kuat dan garang."},"correct":"B","evidence":"F1 (Aina): Angin terasa di muka, pemandangan awan realistik."},{"id":22,"text":"Selain pemandangan dan angin, apakah aspek lain yang menjadikan pengalaman menunggang naga itu istimewa bagi Aina?","options":{"A":"Keupayaan untuk mengubah warna naga.","B":"Interaksi responsif naga terhadap pergerakan pengguna.","C":"Pilihan untuk bertarung dengan naga lain.","D":"Kehadiran watak-watak fantasi lain."},"correct":"B","evidence":"F1 (Aina): Interaksinya. Naga responsif pada pergerakan, boleh diarahkan."},{"id":23,"text":"Apakah perbezaan utama yang dijelaskan oleh Aina antara realiti berperantara (AR) yang digunakan dengan realiti maya (VR) biasa?","options":{"A":"AR menawarkan grafik yang lebih rendah.","B":"AR membolehkan elemen maya disepadukan dengan persekitaran sebenar.","C":"AR hanya boleh dimainkan secara solo.","D":"AR tidak memerlukan gogal untuk berfungsi."},"correct":"B","evidence":"F1 (Aina): AR gabung elemen maya dengan realiti."},{"id":24,"text":"Golongan manakah yang paling mungkin mendapat manfaat rangsangan imaginasi daripada pengalaman menunggang naga ini?","options":{"A":"Warga emas yang ingin mengimbau kenangan lama.","B":"Kanak-kanak yang gemar fantasi dan pengembaraan.","C":"Pelajar kolej yang sedang mencari bahan kajian.","D":"Golongan profesional yang sibuk dengan kerja."},"correct":"B","evidence":"F1 (Aina): Semua suka fantasi. Kanak-kanak imaginasi terangsang, dewasa hargai teknologi."},{"id":25,"text":"Apakah salah satu manfaat pendidikan atau perkembangan diri yang disebut oleh Aina berkaitan teknologi ini?","options":{"A":"Menurunkan tahap stres.","B":"Meningkatkan kemahiran memasak.","C":"Merangsang kreativiti dan kemahiran menyelesaikan masalah.","D":"Menggalakkan interaksi sosial secara bersemuka."},"correct":"C","evidence":"F1 (Aina): Ya, simulasi latihan. Tingkat kreativiti, kemahiran menyelesaikan masalah, koordinasi."},{"id":26,"text":"Apakah dua isu potensi yang disebut oleh Aina berkaitan penggunaan gogal realiti berperantara?","options":{"A":"Masalah pendengaran dan sakit kepala.","B":"Mabuk siber dan ketegangan mata.","C":"Kekeliruan orientasi dan keletihan fizikal.","D":"Alahan kulit dan masalah pernafasan."},"correct":"B","evidence":"F1 (Aina): Mungkin mabuk siber. Mata perlu rehat 20-30 minit elak ketegangan."},{"id":27,"text":"Bagaimanakah Aina melihat masa depan taman hiburan maya ini berbanding taman tema fizikal?","options":{"A":"Ia akan menggantikan sepenuhnya taman tema fizikal.","B":"Ia akan menjadi lebih mahal daripada taman tema fizikal.","C":"Ia akan menjadi pelengkap yang popular dan membuka dunia mustahil.","D":"Ia akan menyebabkan penurunan pengunjung taman tema fizikal secara drastik."},"correct":"C","evidence":"F1 (Aina): Tak ganti, tapi pelengkap popular. Buka dunia mustahil tanpa batasan."},{"id":28,"text":"Apakah kesimpulan atau nasihat akhir Aina mengenai pengalaman menunggang naga tersebut?","options":{"A":"Ia hanya sesuai untuk mereka yang berani.","B":"Ia mahal dan tidak berbaloi untuk dicuba.","C":"Ia adalah pengalaman inovatif dan mendebarkan yang sangat disyorkan.","D":"Ia memerlukan kemahiran teknikal yang tinggi untuk dinikmati."},"correct":"C","evidence":"F1 (Aina): Sangat! Syorkan pada sesiapa nak pengalaman inovatif dan mendebarkan. Berbaloi rasai teknologi."}]},{"id":5,"title":"Bhg 5 (S29-34)","type":"objective","situation":"Penduduk setempat secara sukarela bergotong-royong membersihkan kawasan tepi pantai untuk dijadikan tempat rekreasi keluarga yang dilengkapi kemudahan asas.","dialogue":"Situasi: Penduduk setempat secara sukarela bergotong-royong membersihkan kawasan tepi pantai untuk dijadikan tempat rekreasi keluarga yang dilengkapi kemudahan asas.\n\nM1 (Pencerita): Soalan-soalan 29 hingga 34\nM1 (Pencerita): Anda akan mendengar perbualan tentang usaha komuniti tempatan dalam membangunkan kawasan rekreasi keluarga di tepi pantai.\n\nM1 (Pencerita): Soalan 29.\nM1 (Encik Razif): Puan Maria, saya kagum sungguh melihat semangat gotong-royong penduduk kita hari ini. Kawasan tepi pantai ini sudah banyak berubah, kan?\nF1 (Puan Maria): Betul, Encik Razif. Seawal pagi tadi lagi, ramai yang sudah berkumpul. Matlamat utama kita memang jelas, ingin membersihkan kawasan ini dan menjadikannya sebuah tempat rekreasi yang selesa dan selamat untuk keluarga kita. Bayangkan nanti anak-anak dapat bermain di sini dengan gembira.\nM1 (Encik Razif): Ya, sudah lama kita impikan tempat begini.\nM1 (Pencerita): Apakah matlamat utama gotong-royong tersebut?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 30.\nF1 (Puan Maria): Kesungguhan penduduk kampung kita memang tak dapat disangkal. Semua datang secara sukarela, tanpa paksaan. Dari warga emas hinggalah anak muda, semua turut serta membawa peralatan masing-masing. Ini menunjukkan betapa mereka menyayangi kawasan ini dan ingin melihatnya maju.\nM1 (Encik Razif): Itulah keindahan semangat kejiranan kita. Setiap orang memberi sumbangan mengikut kemampuan. Ada yang membersihkan, ada yang menyumbang makanan dan minuman.\nM1 (Pencerita): Siapakah yang terlibat secara langsung dalam aktiviti gotong-royong ini?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 31.\nF1 (Puan Maria): Antara kerja yang paling penting ialah mengutip sampah sarap yang berselerak, terutamanya botol plastik dan sisa makanan yang hanyut. Kita juga menebas semak samun yang terlalu tebal di tepi-tepi jalan masuk ke pantai. Pokok-pokok yang menghalang pemandangan pun turut dipangkas untuk keselamatan.\nM1 (Encik Razif): Betul tu. Saya lihat tadi ada juga yang sibuk menyapu daun-daun kering dan membersihkan longkang-longkang kecil supaya air tidak bertakung. Kawasan yang berpasir pun diratakan.\nM1 (Pencerita): Antara yang berikut, manakah bukan aktiviti pembersihan yang dijalankan?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 32.\nF1 (Puan Maria): Selepas bersih, kita akan mula memasang kemudahan asas. Kita rancang nak letakkan beberapa bangku panjang, meja berkelah, dan tong sampah yang mencukupi. Penting juga untuk ada papan tanda keselamatan.\nM1 (Encik Razif): Ya, dan jangan lupa pondok kecil untuk berteduh jika hujan atau terlalu panas. Itu sangat penting untuk keluarga yang datang dengan anak kecil. Kita juga perlu memikirkan tandas awam yang bersih.\nM1 (Pencerita): Apakah kemudahan asas yang akan disediakan di kawasan rekreasi tersebut?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 33.\nF1 (Puan Maria): Dengan adanya tempat ini, saya yakin ia akan mengeratkan lagi hubungan kekeluargaan dalam kalangan penduduk. Mereka ada tempat untuk beriadah bersama-sama pada hujung minggu. Anak-anak pun boleh bermain di tempat yang selamat dan terbuka.\nM1 (Encik Razif): Bukan itu sahaja, Puan Maria. Ekonomi kecil-kecilan di kampung kita mungkin juga akan berkembang. Mungkin ada penduduk yang boleh menjual makanan ringan atau hasil kraf tangan mereka kepada pengunjung. Ini juga akan menggalakkan gaya hidup sihat dengan aktiviti luar.\nM1 (Pencerita): Bagaimanakah projek ini dapat memberi manfaat kepada komuniti?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 34.\nF1 (Puan Maria): Harapan saya, tempat ini akan dijaga dengan baik oleh semua pihak. Kita perlu adakan jadual gotong-royong secara berkala, mungkin setiap bulan, untuk memastikan kebersihan dan kemudahan sentiasa terjaga.\nM1 (Encik Razif): Saya setuju. Pendidikan tentang kepentingan menjaga alam sekitar juga perlu disemai dalam diri anak-anak kita sejak kecil. Mungkin boleh diwujudkan jawatankuasa khas untuk memantau kebersihan dan penyelenggaraan kawasan ini. Barulah tempat ini kekal lestari.\nM1 (Pencerita): Apakah cadangan untuk memastikan kelestarian kawasan rekreasi ini pada masa hadapan?\n(Jeda 3 saat.)","questions":[{"id":29,"text":"Apakah matlamat utama gotong-royong tersebut?","options":{"A":"Memulihara ekosistem pantai.","B":"Membina pusat pelancongan baharu.","C":"Menjadikan pantai tempat rekreasi keluarga.","D":"Mengadakan festival kebudayaan di pantai."},"correct":"C","evidence":"F1 (Puan Maria): ...Matlamat utama kita memang jelas, ingin membersihkan kawasan ini dan menjadikannya sebuah tempat rekreasi yang selesa dan selamat untuk keluarga kita."},{"id":30,"text":"Siapakah yang terlibat secara langsung dalam aktiviti gotong-royong ini?","options":{"A":"Sekumpulan pekerja upahan.","B":"Penduduk kampung secara sukarela.","C":"Pelajar sekolah tempatan.","D":"Pihak berkuasa tempatan."},"correct":"B","evidence":"F1 (Puan Maria): Kesungguhan penduduk kampung kita memang tak dapat disangkal. Semua datang secara sukarela, tanpa paksaan. Dari warga emas hinggalah anak muda, semua turut serta membawa peralatan masing-masing."},{"id":31,"text":"Antara yang berikut, manakah bukan aktiviti pembersihan yang dijalankan?","options":{"A":"Mengutip sampah sarap.","B":"Menebas semak samun.","C":"Membersihkan longkang.","D":"Membaiki jambatan usang."},"correct":"D","evidence":"F1 (Puan Maria): ...mengutip sampah sarap..., ...menebas semak samun..., Pokok-pokok...dipangkas... M1 (Encik Razif): ...menyapu daun-daun kering dan membersihkan longkang-longkang kecil..."},{"id":32,"text":"Apakah kemudahan asas yang akan disediakan di kawasan rekreasi tersebut?","options":{"A":"Restoran mewah dan kolam renang.","B":"Bangku, meja berkelah dan pondok teduhan.","C":"Pusat sukan air dan jeti pelancongan.","D":"Hotel bajet dan gerai jualan pakaian."},"correct":"B","evidence":"F1 (Puan Maria): ...beberapa bangku panjang, meja berkelah, dan tong sampah... M1 (Encik Razif): ...pondok kecil untuk berteduh... Kita juga perlu memikirkan tandas awam yang bersih."},{"id":33,"text":"Bagaimanakah projek ini dapat memberi manfaat kepada komuniti?","options":{"A":"Meningkatkan pendapatan nelayan.","B":"Mengurangkan kadar jenayah tempatan.","C":"Mengeratkan hubungan keluarga dan merangsang ekonomi tempatan.","D":"Menarik pelabur asing ke kawasan tersebut."},"correct":"C","evidence":"F1 (Puan Maria): ...mengeratkan lagi hubungan kekeluargaan dalam kalangan penduduk... M1 (Encik Razif): ...Ekonomi kecil-kecilan di kampung kita mungkin juga akan berkembang. Mungkin ada penduduk yang boleh menjual makanan ringan atau hasil kraf tangan mereka..."},{"id":34,"text":"Apakah cadangan untuk memastikan kelestarian kawasan rekreasi ini pada masa hadapan?","options":{"A":"Membiarkan pihak berkuasa menguruskan sepenuhnya.","B":"Melantik pekerja tetap untuk membersihkan kawasan.","C":"Menganjurkan gotong-royong berkala dan pendidikan alam sekitar.","D":"Mengenakan bayaran masuk yang tinggi kepada pengunjung."},"correct":"C","evidence":"F1 (Puan Maria): Kita perlu adakan jadual gotong-royong secara berkala... M1 (Encik Razif): Pendidikan tentang kepentingan menjaga alam sekitar juga perlu disemai..."}]},{"id":6,"title":"Bhg 6 (S35-37)","type":"objective","situation":"Penganjur festival muzik bebas mengadakan konsert akustik di puncak bukit pada waktu senja, menawarkan pemandangan indah dan suasana tenang.","dialogue":"","questions":[{"id":35,"text":"Apakah dua aspek utama yang menjadikan konsert 'Senja di Puncak' ini unik?","options":{"A":"Penggunaan teknologi bunyi terkini.","B":"Bilangan penonton yang sangat ramai.","C":"Pemandangan panorama yang luar biasa.","D":"Lokasi di dewan konsert bertaraf antarabangsa.","E":"Suasana tenang dan pengalaman intim."},"correct":["C","E"],"evidence":"M1 (Imran): \"Lokasinya. Konsert akustik di puncak bukit waktu senja menawarkan pemandangan panorama luar biasa. Cahaya matahari terbenam mencipta suasana magis.\" dan \"Suasana tenang dan damai di puncak bukit juga menjadi tarikan. Ini bukan konsert bising, sebaliknya pengalaman intim di mana melodi dinikmati sepenuhnya, seiring bisikan angin dan kicauan burung senja.\""},{"id":36,"text":"Apakah dua langkah utama yang diambil oleh penganjur untuk memastikan kelancaran dan kelestarian konsert ini?","options":{"A":"Memastikan semua penonton membuang sampah di tempat yang ditetapkan.","B":"Menggunakan kenderaan pacuan empat roda untuk pengangkutan peralatan.","C":"Melantik pasukan keselamatan dan paramedik di lokasi.","D":"Menyediakan kemudahan penginapan mewah untuk artis.","E":"Menambah bilangan tiket untuk meningkatkan hasil jualan."},"correct":["B","C"],"evidence":"M1 (Imran): \"Kami guna kenderaan pacuan empat roda angkut peralatan bunyi dan pentas minimalis. Keselamatan penonton, ada pasukan keselamatan dan paramedik.\""},{"id":37,"text":"Apakah dua harapan utama penganjur terhadap konsert 'Senja di Puncak' ini?","options":{"A":"Menarik penaja korporat besar untuk keuntungan maksima.","B":"Menjadikannya acara tahunan yang menghargai warisan semula jadi.","C":"Mempromosikan genre muzik elektronik yang popular.","D":"Menjadi medium untuk penonton berhubung semula dengan diri dan alam.","E":"Membina infrastruktur kekal di puncak bukit untuk konsert akan datang."},"correct":["B","D"],"evidence":"M1 (Imran): \"Harapan kami ialah menjadikan 'Senja di Puncak' acara tahunan ditunggu-tunggu. Bukan sahaja platform artis bebas, tetapi juga pemangkin menghargai warisan semula jadi.\" dan \"Kami mahu ia medium untuk penonton melepaskan tekanan, berhubung semula dengan diri, dan mengagumi ciptaan Tuhan.\""}]}];
+const reqPassword = "21";
+const gasAppUrl = "https://script.google.com/macros/s/AKfycbztb-uoLIo-DnUlVJxNDEZrlBqdr9T4YrhK4W3muNwgTtASHMHo2D6EZ8QhCj2oPPfH/exec";
+const topicName = "REKREASI DAN HIBURAN";
+const moduleTitle = "Latihan Mendengar IGCSE (40 Marks)";
+const storageKey = "neil_quiz_" + btoa(encodeURIComponent(moduleTitle).replace(/%/g, "")).substring(0, 15);
+
+let cur = 0; 
+let ans = JSON.parse(localStorage.getItem(storageKey + "_ans") || "{}"); 
+let submitted = localStorage.getItem(storageKey + "_sub") === "true"; 
+let totalMarks = 0; let requiredAnswers = 0;
+
+let studentName = localStorage.getItem(storageKey + "_name") || "";
+let studentYear = localStorage.getItem(storageKey + "_year") || "";
+let studentLevel = localStorage.getItem(storageKey + "_level") || "";
+let studentTeacher = localStorage.getItem(storageKey + "_teacher") || "";
+
+sections.forEach(function(s) {
+    let isM = s.id === 6 && s.type === "objective";
+    (s.questions || []).forEach(function(q) { 
+        totalMarks += isM ? 2 : 1; 
+        requiredAnswers += isM ? 2 : 1; 
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("total-display")) {
+        document.getElementById("total-display").innerText = totalMarks;
+    }
+
+    document.body.addEventListener("click", function(e) {
+        let btnOpt = e.target.closest('.opt-btn');
+        if (btnOpt && !btnOpt.hasAttribute('disabled')) {
+            let qid = parseInt(btnOpt.getAttribute('data-qid'));
+            let opt = btnOpt.getAttribute('data-opt');
+            let isMulti = btnOpt.getAttribute('data-ismulti') === 'true';
+            window.saveOpt(qid, opt, isMulti);
+        }
+
+        if (e.target.closest('#btn-refresh')) window.refreshPage();
+        if (e.target.closest('.btn-logout')) window.logoutUser();
+        if (e.target.closest('#btn-submit-quiz')) window.submitQuiz();
+    });
+
+    const box = document.getElementById("box");
+    if (box) {
+        box.addEventListener("input", function(e) {
+            if (e.target.classList.contains('cloze-input')) {
+                let qid = parseInt(e.target.getAttribute('data-qid'));
+                window.saveText(qid, e.target.value);
+            }
+        });
+    }
+});
+
+document.addEventListener("contextmenu", function(e) { e.preventDefault(); }); 
+document.addEventListener("visibilitychange", function() { 
+    if (!submitted && document.getElementById("welcome-modal") && document.getElementById("welcome-modal").classList.contains("hidden")) {
+        if (document.hidden && document.getElementById("app-body")) { document.getElementById("app-body").classList.add("blurred-security"); } 
+        else if (document.getElementById("app-body")) { document.getElementById("app-body").classList.remove("blurred-security"); }
+    }
+});
+document.addEventListener("keydown", function(e) { 
+    if ((e.ctrlKey || e.metaKey) && (e.key === "p" || e.key === "s")) { 
+        e.preventDefault(); alert("Fungsi ini disekat."); 
+    } 
+});
+
+window.checkRegistration = function() {
+    if (studentName && studentYear && studentLevel && studentTeacher) {
+        if (document.getElementById("welcome-modal")) document.getElementById("welcome-modal").classList.add("hidden");
+        if (document.getElementById("main-content")) document.getElementById("main-content").classList.remove("hidden");
+        if (document.getElementById("display-student-name")) document.getElementById("display-student-name").innerText = studentName + " (Cikgu " + studentTeacher + " | Year " + studentYear + " - " + studentLevel + ")";
+        if(submitted) calculateScore();
+        renderTabs(); renderContent(); 
+    } else {
+        if (document.getElementById("welcome-modal")) document.getElementById("welcome-modal").classList.remove("hidden");
+        if (document.getElementById("main-content")) document.getElementById("main-content").classList.add("hidden");
+    }
+};
+
+window.startQuiz = function() {
+    const n = document.getElementById("student-name").value.trim();
+    const y = document.getElementById("student-year").value;
+    const l = document.getElementById("student-level").value;
+    const t = document.getElementById("student-teacher").value;
+    
+    if(n.length < 3) return alert("Sila masukkan nama penuh anda (minimum 3 huruf).");
+    if(!t) return alert("Sila pilih Guru anda.");
+    if(!y) return alert("Sila pilih Tahun (Year) anda.");
+    if(!l) return alert("Sila pilih Tahap Kelas anda.");
+    
+    studentName = n; studentYear = y; studentLevel = l; studentTeacher = t;
+    localStorage.setItem(storageKey + "_name", studentName);
+    localStorage.setItem(storageKey + "_year", studentYear);
+    localStorage.setItem(storageKey + "_level", studentLevel);
+    localStorage.setItem(storageKey + "_teacher", studentTeacher);
+    
+    checkRegistration();
+};
+
+function persistData() {
+    try {
+        localStorage.setItem(storageKey + "_ans", JSON.stringify(ans));
+        localStorage.setItem(storageKey + "_sub", submitted ? "true" : "false");
+    } catch(e) {}
+}
+
+function calculateScore() {
+    let score = 0;
+    sections.forEach(function(s) {
+        let isM = s.id === 6 && s.type === "objective";
+        (s.questions || []).forEach(function(q) {
+            if (s.type === "objective" || s.type === "picture") {
+                if (isM) { 
+                    let uAns = ans[q.id] || []; 
+                    (q.correct || []).forEach(function(c) { if(uAns.includes(c)) score++; }); 
+                } 
+                else { if(ans[q.id] === q.correct) score++; }
+            } else if (s.type === "cloze") {
+                let uAns = (ans[q.id] || "").toLowerCase().trim(); 
+                let cAns = (q.correct || "").toLowerCase().trim();
+                if(uAns !== "" && uAns === cAns) score++;
+            }
+        });
+    });
+    if (document.getElementById("score-display")) {
+        document.getElementById("score-display").innerText = score;
+    }
+    return score;
+}
+
+function renderTabs() {
+    let html = "";
+    sections.forEach(function(s, idx) {
+        let activeClass = cur === idx ? "bg-indigo-600 text-white shadow-md scale-[1.02]" : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50";
+        let ansCount = 0;
+        let targetCount = s.id === 6 && s.type === "objective" ? (s.questions ? s.questions.length * 2 : 0) : (s.questions ? s.questions.length : 0);
+        
+        if(s.questions) { 
+            s.questions.forEach(function(q) { 
+                if(ans[q.id]) { 
+                    if(Array.isArray(ans[q.id])) ansCount += ans[q.id].length; 
+                    else if(ans[q.id].trim() !== "") ansCount++; 
+                } 
+            }); 
+        }
+        let statusDot = (!submitted && ansCount > 0 && ansCount >= targetCount) ? "<span class='inline-block w-2 h-2 rounded-full bg-emerald-400 ml-2'></span>" : "";
+        html += "<button onclick='changeTab(" + idx + ")' class='px-5 py-3 rounded-2xl text-[10px] sm:text-xs font-black uppercase whitespace-nowrap transition-all " + activeClass + "'>" + escapeHTML(s.title) + statusDot + "</button>";
+    });
+    if (document.getElementById("tabs")) {
+        document.getElementById("tabs").innerHTML = html;
+    }
+}
+
+window.changeTab = function(idx) { cur = idx; renderTabs(); renderContent(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+window.saveOpt = function(id, v, isM) {
+    if(submitted) return;
+    if(isM) { 
+        if(!ans[id]) ans[id] = []; 
+        let idx = ans[id].indexOf(v); 
+        if(idx > -1) ans[id].splice(idx, 1); 
+        else if(ans[id].length < 2) ans[id].push(v); 
+    } 
+    else { ans[id] = v; }
+    persistData(); renderTabs(); renderContent();
+};
+
+window.saveText = function(id, val) {
+    if(submitted) return;
+    ans[id] = val; persistData(); renderTabs();
+};
+
+window.submitQuiz = function() {
+    let currentAnsCount = 0;
+    Object.values(ans).forEach(function(v) { 
+        if(Array.isArray(v)) currentAnsCount += v.length; 
+        else if(v.trim() !== "") currentAnsCount++; 
+    });
+    if(currentAnsCount < requiredAnswers) { 
+        if(!confirm("Awak belum menanda semua soalan. Teruskan hantar?")) return; 
+    }
+
+    if (reqPassword !== "") {
+        let userPwd = prompt("🛑 KATA LALUAN DIPERLUKAN\n\nSila masukkan kata laluan dari guru:");
+        if (userPwd === null) return; 
+        if (userPwd.trim() !== reqPassword) { alert("❌ Kata laluan salah!"); return; }
+    }
+    
+    const finalScore = calculateScore();
+    if (gasAppUrl && gasAppUrl.startsWith("http")) {
+        document.getElementById("submitting-overlay").classList.remove("hidden");
+        document.getElementById("submitting-overlay").classList.add("flex");
+        
+        const payload = {
+            topic: topicName,
+            name: studentName,
+            year: studentYear,
+            level: studentLevel,
+            teacher: studentTeacher,
+            score: finalScore,
+            total: totalMarks,
+            details: ans
+        };
+
+        fetch(gasAppUrl, { 
+            method: "POST", 
+            mode: "no-cors", 
+            headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+            body: JSON.stringify(payload) 
+        })
+        .then(function() { window.finalizeSubmission(); })
+        .catch(function(err) { alert("Ralat hantar ke database cikgu, tapi jawapan telah disimpan di peranti ini."); window.finalizeSubmission(); });
+    } else { window.finalizeSubmission(); }
+};
+
+window.finalizeSubmission = function() {
+    if (document.getElementById("submitting-overlay")) {
+        document.getElementById("submitting-overlay").classList.add("hidden");
+        document.getElementById("submitting-overlay").classList.remove("flex");
+    }
+    submitted = true; persistData(); calculateScore();
+    if (document.getElementById("app-body")) document.getElementById("app-body").classList.remove("blurred-security");
+    renderTabs(); renderContent(); window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+window.refreshPage = function() {
+    location.reload();
+};
+
+window.logoutUser = function() {
+    if(confirm("AMARAN: Anda pasti untuk log keluar? Semua jawapan akan dipadam!")) {
+        localStorage.removeItem(storageKey + "_ans"); localStorage.removeItem(storageKey + "_sub");
+        localStorage.removeItem(storageKey + "_name"); localStorage.removeItem(storageKey + "_year");
+        localStorage.removeItem(storageKey + "_level"); localStorage.removeItem(storageKey + "_teacher");
+        location.reload();
+    }
+};
+
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderContent() {
+    const s = sections[cur]; const b = document.getElementById("box");
+    if (!b) return;
+
+    const isMulti = s.id === 6 && s.type === "objective";
+    let h = "<div class='flex justify-between items-start mb-4'><h2 class='text-2xl font-black text-indigo-950 uppercase tracking-tight'>" + escapeHTML(s.title) + "</h2></div>";
+    
+    if(s.situation) h += "<p class='text-sm font-medium text-slate-500 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100'>" + escapeHTML(s.situation) + "</p>";
+    if(isMulti && !submitted) h += "<div class='bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 mb-6 rounded-r-xl font-bold text-sm'>⚠️ PENTING: Anda perlu menanda DUA (2) jawapan untuk soalan di bahagian ini.</div>";
+    
+    if(s.audioUrl) {
+        h += "<div class='bg-indigo-50 p-4 rounded-3xl mb-8 border border-indigo-100 shadow-inner'><div class='text-[10px] font-black text-indigo-600 uppercase mb-2 pl-2'>Rakaman Audio</div><audio controls class='w-full h-10' src='" + s.audioUrl + "'></audio></div>";
+    } else {
+        h += "<div class='bg-indigo-50 p-4 rounded-2xl mb-8 text-center text-[12px] font-black text-indigo-600 uppercase'>Sila dengar audio dari guru.</div>";
+    }
+    
+    if(s.questions && s.questions.length > 0) {
+        s.questions.forEach(function(q) {
+            h += "<div class='mb-10'>";
+            if (s.type === "picture") {
+                if (q.imageData) h += "<div class='w-full h-48 sm:h-64 mb-5 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-white flex items-center justify-center p-2'><img src='" + q.imageData + "' class='max-w-full max-h-full object-contain rounded-xl'/></div>";
+                h += "<p class='font-bold text-slate-800 mb-5 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p><div class='grid gap-2'>";
+                Object.keys(q.options || {}).sort().forEach(function(k) {
+                    let v = q.options[k];
+                    if(v && v.trim() !== "") {
+                        let isSelected = ans[q.id] === k; let isActuallyCorrect = q.correct === k; let cl = "opt-btn";
+                        if(submitted) { if(isActuallyCorrect) cl += " correct-answer"; else if (isSelected && !isActuallyCorrect) cl += " wrong-answer"; else cl += " dimmed-answer"; } 
+                        else if(isSelected) cl += " selected shadow-sm";
+                        let safeK = escapeHTML(k).replace(/'/g, "\\'");
+                        h += "<button data-qid='" + q.id + "' data-opt='" + safeK + "' data-ismulti='false' class='" + cl + "' " + (submitted ? "disabled" : "") + "><span class='w-8 inline-block text-slate-400 font-black'>" + k + "</span><span class='flex-1'>" + escapeHTML(v) + "</span></button>";
+                    }
+                });
+                if(submitted && q.evidence) h += "<div class='mt-4 p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-200'>💡 Bukti: " + escapeHTML(q.evidence) + "</div>";
+                h += "</div>";
+            } 
+            else if (s.type === "cloze") {
+                h += "<p class='font-bold text-slate-800 mb-3 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p>";
+                let uAns = ans[q.id] || ""; let isCorrect = false;
+                if (submitted) isCorrect = (uAns.toLowerCase().trim() === (q.correct || "").toLowerCase().trim());
+                let inputClass = "w-full p-3 rounded-xl border-2 font-bold outline-none transition-all cloze-input ";
+                if (submitted) { if (isCorrect) inputClass += "border-emerald-500 bg-emerald-50 text-emerald-700"; else inputClass += "border-rose-500 bg-rose-50 text-rose-700 line-through-red"; } 
+                else { inputClass += "border-slate-200 focus:border-indigo-400 text-slate-800"; }
+                let safeAns = escapeHTML(uAns).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                h += "<input type='text' data-qid='" + q.id + "' value='" + safeAns + "' placeholder='Taip jawapan...' class='" + inputClass + "' " + (submitted ? "disabled" : "") + "/>";
+                if(submitted) { if (isCorrect) h += "<div class='mt-2 text-xs font-black text-emerald-600 flex items-center gap-1'>✅ Tepat!</div>"; else h += "<div class='mt-2 p-3 bg-rose-100 text-rose-800 rounded-xl border border-rose-200 text-xs font-bold'>❌ Salah. Jawapan sebenar: <span class='text-rose-900 font-black'>" + escapeHTML(q.correct) + "</span></div>"; }
+            } 
+            else {
+                h += "<p class='font-bold text-slate-800 mb-5 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p><div class='grid gap-2'>";
+                Object.keys(q.options || {}).sort().forEach(function(k) {
+                    let v = q.options[k];
+                    if(v && v.trim() !== "") {
+                        let isSelected = isMulti ? (ans[q.id] || []).includes(k) : ans[q.id] === k; let isActuallyCorrect = isMulti ? (q.correct || []).includes(k) : q.correct === k; let cl = "opt-btn";
+                        if(submitted) { if(isActuallyCorrect) cl += " correct-answer"; else if (isSelected && !isActuallyCorrect) cl += " wrong-answer"; else cl += " dimmed-answer"; } 
+                        else if(isSelected) cl += " selected shadow-sm";
+                        let safeK = escapeHTML(k).replace(/'/g, "\\'");
+                        h += "<button data-qid='" + q.id + "' data-opt='" + safeK + "' data-ismulti='" + isMulti + "' class='" + cl + "' " + (submitted ? "disabled" : "") + ">";
+                        if (isMulti && !submitted) h += "<div class='w-6 h-6 mr-3 border-2 rounded flex items-center justify-center " + (isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-slate-300") + "'>" + (isSelected ? "✓" : "") + "</div>"; else h += "<span class='w-8 inline-block text-slate-400 font-black'>" + k + "</span>";
+                        h += "<span class='flex-1'>" + escapeHTML(v) + "</span></button>";
+                    }
+                });
+                if(submitted && q.evidence) h += "<div class='mt-4 p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-200'>💡 Bukti: " + escapeHTML(q.evidence) + "</div>";
+                h += "</div>";
+            }
+            h += "</div>";
+        });
+    } else { h += "<div class='text-center py-10 text-slate-400 font-bold uppercase text-xs'>Tiada soalan.</div>"; }
+
+    if(!submitted && cur === sections.length - 1) { h += "<button id='btn-submit-quiz' class='w-full bg-emerald-500 text-white py-5 rounded-[1.5rem] font-black text-lg uppercase shadow-xl transition-all hover:bg-emerald-600 hover:scale-[1.02] mt-6 border-b-4 border-emerald-700'>HANTAR JAWAPAN</button>"; } 
+    else if (!submitted && cur < sections.length - 1) { h += "<button onclick='changeTab(" + (cur + 1) + ")' class='w-full bg-blue-500 text-white py-4 rounded-2xl font-black uppercase shadow-lg transition-all hover:bg-blue-600 mt-4 border-b-4 border-blue-700'>Seterusnya: " + escapeHTML(sections[cur+1].title) + "</button>"; } 
+    else if (submitted && cur === sections.length - 1) { h += "<div class='text-center p-8 bg-emerald-50 rounded-3xl border-2 border-emerald-200 mt-8 shadow-sm'><h3 class='text-2xl font-black text-emerald-600 uppercase mb-2'>Tahniah! Ujian Tamat 🎉</h3><p class='text-sm text-emerald-800 font-medium'>Anda mendapat skor <span class='font-black text-lg'>" + (document.getElementById('score-display') ? document.getElementById('score-display').innerText : score) + " / " + totalMarks + "</span>.</p></div>"; }
+
+    if (b) b.innerHTML = h;
+}
+
+window.onload = function() { checkRegistration(); };
+
+    </script>
+</body>
+</html>
